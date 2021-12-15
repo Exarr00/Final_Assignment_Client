@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import NewStudentView from '../views/NewStudentView';
-import { addStudentThunk } from '../../store/thunks';
+import { addStudentThunk,fetchAllCampusesThunk } from '../../store/thunks';
 
 
 class NewStudentContainer extends Component {
@@ -12,10 +12,17 @@ class NewStudentContainer extends Component {
         this.state = {
           firstname: "", 
           lastname: "", 
+          email: "",
+          gpa:"",
+          imageUrl:"",
           campusId: null, 
           redirect: false, 
           redirectId: null
         };
+    }
+
+    componentDidMount() {
+      this.props.fetchAllCampuses();
     }
 
     handleChange = event => {
@@ -26,11 +33,16 @@ class NewStudentContainer extends Component {
 
     handleSubmit = async event => {
         event.preventDefault();
-
+        let campus = this.state.campusId
+        if(this.state.campusId === "none"){
+          campus = null;
+        }
         let student = {
             firstname: this.state.firstname,
             lastname: this.state.lastname,
-            campusId: this.state.campusId
+            email: this.state.email,
+            gpa: this.state.gpa,
+            campusId: campus
         };
         
         let newStudent = await this.props.addStudent(student);
@@ -55,16 +67,23 @@ class NewStudentContainer extends Component {
         return (
           <NewStudentView 
             handleChange = {this.handleChange} 
-            handleSubmit={this.handleSubmit}      
+            handleSubmit={this.handleSubmit}
+            allCampuses = {this.props.allCampuses}      
           />
         );
     }
 }
 
+const mapState = (state) =>{
+  return{
+    allCampuses: state.allCampuses
+  }
+}
 const mapDispatch = (dispatch) => {
     return({
         addStudent: (student) => dispatch(addStudentThunk(student)),
+        fetchAllCampuses: () => dispatch(fetchAllCampusesThunk())
     })
 }
 
-export default connect(null, mapDispatch)(NewStudentContainer);
+export default connect(mapState, mapDispatch)(NewStudentContainer);
