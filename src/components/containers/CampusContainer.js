@@ -44,7 +44,7 @@ class CampusContainer extends Component {
     return (
       <CampusView 
         campus={this.props.campus}
-        nullify={this.nullify}
+        deleteCamp={this.deleteCamp}
         allStudents={this.props.allStudents}
         addStudent={this.addStudent}
       />
