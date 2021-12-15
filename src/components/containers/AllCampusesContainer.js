@@ -1,8 +1,9 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { fetchAllCampusesThunk } from "../../store/thunks";
+import { fetchAllCampusesThunk , deleteCampusThunk} from "../../store/thunks";
 import { AllCampusesView } from "../views";
+import { withRouter } from "react-router-dom";
 
 class AllCampusesContainer extends Component {
   componentDidMount() {
@@ -10,10 +11,12 @@ class AllCampusesContainer extends Component {
     this.props.fetchAllCampuses();
   }
 
+
   render() {
     return (
       <AllCampusesView
         allCampuses={this.props.allCampuses}
+        deleteCampus={this.props.deleteCampus}
       />
     );
   }
@@ -30,6 +33,7 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
   return {
     fetchAllCampuses: () => dispatch(fetchAllCampusesThunk()),
+    deleteCampus: (id) => dispatch(deleteCampusThunk(id))
   };
 };
 
@@ -37,7 +41,8 @@ const mapDispatch = (dispatch) => {
 AllCampusesContainer.propTypes = {
   allCampuses: PropTypes.array.isRequired,
   fetchAllCampuses: PropTypes.func.isRequired,
+  deleteCampus: PropTypes.func.isRequired
 };
 
 // Export our store-connected container by default;
-export default connect(mapState, mapDispatch)(AllCampusesContainer);
+export default withRouter(connect(mapState, mapDispatch)(AllCampusesContainer));
