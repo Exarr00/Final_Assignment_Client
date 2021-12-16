@@ -1,5 +1,5 @@
 import Navbar from'./Navbar/Navbar'
-import {useStyles} from './styles/usestyles'
+import {useStyles} from './styles/navhome'
 import bid from './some.png'
 
 const HomePageView = () => {
