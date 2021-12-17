@@ -1,17 +1,32 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCampusThunk, editStudentThunk, fetchAllStudentsThunk} from "../../store/thunks";
+import { Redirect } from 'react-router-dom';
+import { fetchCampusThunk, editStudentThunk, fetchAllStudentsThunk, deleteCampusThunk } from "../../store/thunks";
 
 import { CampusView } from "../views";
 
 class CampusContainer extends Component {
+  constructor(props) {
+    super(props);
+    console.log(props)
+    this.state = {
+      redirect: false,
+    };
+  }
   componentDidMount() {
     //getting campus ID from url
     this.props.fetchCampus(this.props.match.params.id);
     this.props.fetchAllStudents();
   }
 
-  deleteCamp = async student => {
+  deleteCamp = campusID => {
+    this.props.deleteCampus(campusID)
+    this.setState({
+      redirect: true
+    })
+  }
+
+  deleteStudent = async student => {
     let addedData = {
       id: student.id,
       firstName: student.firstname,
@@ -20,10 +35,10 @@ class CampusContainer extends Component {
       image: student.imageUrl,
       gpa: student.gpa,
       campusId: null,
-  }
-  await this.props.editStudent(addedData)
-  await this.props.fetchCampus(this.props.match.params.id);
-  await this.props.fetchAllStudents();
+    }
+    await this.props.editStudent(addedData)
+    await this.props.fetchCampus(this.props.match.params.id);
+    await this.props.fetchAllStudents();
   }
 
   addStudent = async event => {
@@ -40,13 +55,21 @@ class CampusContainer extends Component {
     await this.props.fetchAllStudents();
   }
 
+  componentWillUnmount() {
+    this.setState({ redirect: false });
+  }
+
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to={'/campuses'} />)
+    }
     return (
-      <CampusView 
+      <CampusView
         campus={this.props.campus}
-        deleteCamp={this.deleteCamp}
+        deleteStudent={this.deleteStudent}
         allStudents={this.props.allStudents}
         addStudent={this.addStudent}
+        deleteCamp={this.deleteCamp}
       />
     );
   }
@@ -66,7 +89,8 @@ const mapDispatch = (dispatch) => {
   return {
     fetchCampus: (id) => dispatch(fetchCampusThunk(id)),
     editStudent: student => dispatch(editStudentThunk(student)),
-    fetchAllStudents: () => dispatch(fetchAllStudentsThunk())
+    fetchAllStudents: () => dispatch(fetchAllStudentsThunk()),
+    deleteCampus: (id) => dispatch(deleteCampusThunk(id))
   };
 };
 

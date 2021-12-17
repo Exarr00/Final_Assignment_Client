@@ -6,14 +6,14 @@ import NewCampusView from '../views/NewCampusView';
 import { addCampusThunk } from '../../store/thunks';
 
 class NewCampusContainer extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-          name: "", 
-          address: "",
-          description: "", 
-          redirect: false, 
-          redirectId: null
+            name: "",
+            address: "",
+            description: "",
+            redirect: false,
+            redirectId: null
         };
     }
 
@@ -35,34 +35,34 @@ class NewCampusContainer extends Component {
         let newCampus = await this.props.addCampus(campus);
 
         this.setState({
-            name:this.state.name,
+            name: this.state.name,
             address: this.state.address,
             description: this.state.description,
-            redirect: true, 
+            redirect: true,
             redirectId: newCampus.id
         })
 
     }
 
     componentWillUnmount() {
-        this.setState({redirect: false, redirectId: null});
+        this.setState({ redirect: false, redirectId: null });
     }
 
     render() {
-        if(this.state.redirect) {
-          return (<Redirect to={`/campus/${this.state.redirectId}`}/>)
+        if (this.state.redirect) {
+            return (<Redirect to={`/campus/${this.state.redirectId}`} />)
         }
         return (
-          <NewCampusView 
-            handleChange = {this.handleChange} 
-            handleSubmit={this.handleSubmit}      
-          />
+            <NewCampusView
+                handleChange={this.handleChange}
+                handleSubmit={this.handleSubmit}
+            />
         );
     }
 }
 
 const mapDispatch = (dispatch) => {
-    return({
+    return ({
         addCampus: (campus) => dispatch(addCampusThunk(campus)),
     })
 }
